@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rso-service-ingress
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - host: ""
+    http:
+      paths:
+      - backend:
+          service:
+            name: user-service
+            port:
+              number: 80
+        path: /api/user
+        pathType: Prefix
+      - backend:
+          service:
+            name: ad-service
+            port:
+              number: 80
+        path: /api/ad
+        pathType: Prefix

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: user-service
+      labels:
+        app: user-service
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: user-service
+        image: muchacho3alex/rsousermicroservice:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200M
+        ports:
+          - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /api/user/health
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 3600
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/user/health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 3600
+          timeoutSeconds: 10
+  selector:
+    matchLabels:
+      app: user-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: user-service

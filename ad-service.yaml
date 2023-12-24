@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ad-service
+  labels:
+    app: ad-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: ad-service
+      labels:
+        app: ad-service
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: ad-service
+        image: urban98/ad-service-api:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200M
+        ports:
+          - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /api/ad/health
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 3600
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/ad/health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 3600
+          timeoutSeconds: 10
+  selector:
+    matchLabels:
+      app: ad-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ad-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: ad-service
