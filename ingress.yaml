@@ -10,15 +10,29 @@ spec:
       paths:
       - backend:
           service:
-            name: user-service
+            name: user-cip-service
             port:
               number: 80
-        path: /api/user
+        path: /users
         pathType: Prefix
       - backend:
           service:
-            name: ad-service
+            name: ad-cip-service
             port:
               number: 80
-        path: /api/ad
+        path: /ads
+        pathType: Prefix
+      - backend:
+          service:
+            name: transaction-cip-service
+            port:
+              number: 80
+        path: /transactions
+        pathType: Prefix
+      - backend:
+          service:
+            name: discussion-cip-service
+            port:
+              number: 80
+        path: /discussions
         pathType: Prefix
